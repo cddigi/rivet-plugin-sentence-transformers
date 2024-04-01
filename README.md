@@ -1,8 +1,8 @@
 <h1 align="center"><img src="https://rivet.ironcladapp.com/img/logo-banner-wide.png" alt="Rivet Logo"></h1>
 
-# Rivet Example Plugin
+# Rivet Sentence Transformers Plugin
 
-This project is an example of a [Rivet](https://github.com/Ironclad/rivet) plugin. It is a minimal TypeScript Rivet plugin that adds a single node called Example Plugin Node.
+This project is an example of a [Rivet](https://github.com/Ironclad/rivet) plugin. It is a minimal TypeScript Rivet plugin that adds a single node called Sentence Transformers Plugin Node.
 
 - [Using the plugin](#using-the-plugin)
   - [In Rivet](#in-rivet)
@@ -22,7 +22,7 @@ This project is an example of a [Rivet](https://github.com/Ironclad/rivet) plugi
 To use this plugin in Rivet:
 
 1. Open the plugins overlay at the top of the screen.
-2. Search for "rivet-plugin-example"
+2. Search for "rivet-plugin-sentence-transformers"
 3. Click the "Install" button to install the plugin into your current project.
 
 ### In Code
@@ -31,13 +31,13 @@ Load your plugin and Rivet into your application:
 
 ```ts
 import * as Rivet from "@ironclad/rivet-core";
-import examplePlugin from "rivet-plugin-example";
+import sentenceTransformersPlugin from "rivet-plugin-sentence-transformers";
 ```
 
 Register your plugin with Rivet be using the `globalRivetNodeRegistry` or creating a new `NodeRegistration` and registering with that:
 
 ```ts
-Rivet.globalRivetNodeRegistry.registerPlugin(examplePlugin(Rivet));
+Rivet.globalRivetNodeRegistry.registerPlugin(sentenceTransformersPlugin(Rivet));
 ```
 
 ## Making your own plugin
@@ -56,7 +56,7 @@ Follow the example in [src/index.ts](src/index.ts) to define your plugin. Your p
 
 ### 2. Node Definitions
 
-Follow the example in [src/nodes/ExamplePluginNode.ts](src/nodes/ExamplePluginNode.ts) to define your plugin's nodes. You should follow a simlar syntax of exporting functions that take in the Rivet Core library.
+Follow the example in [src/nodes/SentenceTransformersPluginNode.ts](src/nodes/SentenceTransformersPluginNode.ts) to define your plugin's nodes. You should follow a simlar syntax of exporting functions that take in the Rivet Core library.
 
 - Nodes must implement `PluginNodeDefinition<T>` by calling `pluginNodeDefinition(yourPluginImpl, "Node Name")`.
 - Node implementations must implement `PluginNodeImpl<T>`.

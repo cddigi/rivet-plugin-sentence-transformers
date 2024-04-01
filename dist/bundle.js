@@ -1,6 +1,6 @@
-// src/nodes/ExamplePluginNode.ts
-function examplePluginNode(rivet) {
-  const ExamplePluginNodeImpl = {
+// src/nodes/SentenceTransformersPluginNode.ts
+function sentenceTransformersPluginNode(rivet) {
+  const SentenceTransformersPluginNodeImpl = {
     // This should create a new instance of your node type from scratch.
     create() {
       const node = {
@@ -8,12 +8,14 @@ function examplePluginNode(rivet) {
         id: rivet.newId(),
         // This is the default data that your node will store
         data: {
-          someData: "Hello World"
+          embeddings: [],
+          strArray: [],
+          useStrArrayInput: false
         },
         // This is the default title of your node.
-        title: "Example Plugin Node",
+        title: "Sentence-Transformers Plugin Node",
         // This must match the type of your node.
-        type: "examplePlugin",
+        type: "sentenceTransformersPluginNode",
         // X and Y should be set to 0. Width should be set to a reasonable number so there is no overflow.
         visualData: {
           x: 0,
@@ -27,11 +29,11 @@ function examplePluginNode(rivet) {
     // connection, nodes, and project are for advanced use-cases and can usually be ignored.
     getInputDefinitions(data, _connections, _nodes, _project) {
       const inputs = [];
-      if (data.useSomeDataInput) {
+      if (data.useStrArrayInput) {
         inputs.push({
-          id: "someData",
-          dataType: "string",
-          title: "Some Data"
+          id: "strArray",
+          dataType: "string[]",
+          title: "Paths"
         });
       }
       return inputs;
@@ -41,29 +43,29 @@ function examplePluginNode(rivet) {
     getOutputDefinitions(_data, _connections, _nodes, _project) {
       return [
         {
-          id: "someData",
-          dataType: "string",
-          title: "Some Data"
+          id: "embeddings",
+          dataType: "vector[]",
+          title: "Embeddings"
         }
       ];
     },
     // This returns UI information for your node, such as how it appears in the context menu.
     getUIData() {
       return {
-        contextMenuTitle: "Example Plugin",
-        group: "Example",
-        infoBoxBody: "This is an example plugin node.",
-        infoBoxTitle: "Example Plugin Node"
+        contextMenuTitle: "Sentence-Transformers Plugin",
+        group: "Data",
+        infoBoxBody: "This is a sentence-transformer plugin node.",
+        infoBoxTitle: "Sentence-Transformers Plugin Node"
       };
     },
     // This function defines all editors that appear when you edit your node.
     getEditors(_data) {
       return [
         {
-          type: "string",
-          dataKey: "someData",
-          useInputToggleDataKey: "useSomeDataInput",
-          label: "Some Data"
+          type: "stringList",
+          dataKey: "strArray",
+          useInputToggleDataKey: "useStrArrayInput",
+          label: "String List"
         }
       ];
     },
@@ -71,66 +73,70 @@ function examplePluginNode(rivet) {
     // what the current data of the node is in some way that is useful at a glance.
     getBody(data) {
       return rivet.dedent`
-        Example Plugin Node
-        Data: ${data.useSomeDataInput ? "(Using Input)" : data.someData}
+        Sentence-Transformers Plugin Node
+        Embeddings: ${data.embeddings}
       `;
     },
     // This is the main processing function for your node. It can do whatever you like, but it must return
     // a valid Outputs object, which is a map of port IDs to DataValue objects. The return value of this function
     // must also correspond to the output definitions you defined in the getOutputDefinitions function.
     async process(data, inputData, _context) {
-      const someData = rivet.getInputOrData(
+      const strArray = rivet.getInputOrData(
         data,
         inputData,
-        "someData",
-        "string"
+        "strArray",
+        "string[]"
       );
+      const sentenceTransformers = await SentenceTransformers.from_pretrained(
+        "mixedbread-ai/mxbai-embed-large-v1"
+      );
+      const embeddings = await sentenceTransformers.encode(strArray);
       return {
-        ["someData"]: {
-          type: "string",
-          value: someData
+        ["embeddings"]: {
+          type: "vector[]",
+          value: embeddings
         }
       };
     }
   };
-  const examplePluginNode2 = rivet.pluginNodeDefinition(
-    ExamplePluginNodeImpl,
-    "Example Plugin Node"
+  const SentenceTransformersPluginNode = rivet.pluginNodeDefinition(
+    SentenceTransformersPluginNodeImpl,
+    "Sentence-Transformers Plugin Node"
   );
-  return examplePluginNode2;
+  return SentenceTransformersPluginNode;
 }
 
 // src/index.ts
 var plugin = (rivet) => {
-  const exampleNode = examplePluginNode(rivet);
-  const examplePlugin = {
+  const sentenceTransformersNode = sentenceTransformersPluginNode(rivet);
+  const sentenceTransformersPlugin = {
     // The ID of your plugin should be unique across all plugins.
-    id: "example-plugin",
+    id: "sentenceTransformers-plugin",
     // The name of the plugin is what is displayed in the Rivet UI.
-    name: "Example Plugin",
+    name: "Sentence Transformers Plugin",
     // Define all configuration settings in the configSpec object.
     configSpec: {
-      exampleSetting: {
+      sentenceTransformerSetting: {
         type: "string",
-        label: "Example Setting",
-        description: "This is an example setting for the example plugin.",
-        helperText: "This is an example setting for the example plugin."
+        label: "Sentence Transformers Setting",
+        description: "This is an example setting for the sentenceTransformers plugin.",
+        helperText: "This is an example setting for the sentenceTransformers plugin."
       }
     },
     // Define any additional context menu groups your plugin adds here.
     contextMenuGroups: [
       {
-        id: "example",
-        label: "Example"
+        id: "sentenceTransformers",
+        label: "Sentence Transformers"
       }
     ],
     // Register any additional nodes your plugin adds here. This is passed a `register`
     // function, which you can use to register your nodes.
     register: (register) => {
-      register(exampleNode);
+      register(sentenceTransformersNode);
     }
   };
-  return examplePlugin;
+  return sentenceTransformersPlugin;
 };
 var src_default = plugin;
 export {
