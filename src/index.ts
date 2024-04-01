@@ -3,49 +3,51 @@
 // a parameter, and you can use it to access any Rivet functionality you need.
 import type { RivetPlugin, RivetPluginInitializer } from "@ironclad/rivet-core";
 
-import { examplePluginNode } from "./nodes/ExamplePluginNode.js";
+import { sentenceTransformersPluginNode } from "./nodes/SentenceTransformersPluginNode.js";
 
 // A Rivet plugin must default export a plugin initializer function. This takes in the Rivet library as its
 // only parameter. This function must return a valid RivetPlugin object.
 const plugin: RivetPluginInitializer = (rivet) => {
   // Initialize any nodes in here in the same way, by passing them the Rivet library.
-  const exampleNode = examplePluginNode(rivet);
+  const sentenceTransformersNode = sentenceTransformersPluginNode(rivet);
 
   // The plugin object is the definition for your plugin.
-  const examplePlugin: RivetPlugin = {
+  const sentenceTransformersPlugin: RivetPlugin = {
     // The ID of your plugin should be unique across all plugins.
-    id: "example-plugin",
+    id: "sentenceTransformers-plugin",
 
     // The name of the plugin is what is displayed in the Rivet UI.
-    name: "Example Plugin",
+    name: "Sentence Transformers Plugin",
 
     // Define all configuration settings in the configSpec object.
     configSpec: {
-      exampleSetting: {
+      sentenceTransformerSetting: {
         type: "string",
-        label: "Example Setting",
-        description: "This is an example setting for the example plugin.",
-        helperText: "This is an example setting for the example plugin.",
+        label: "Sentence Transformers Setting",
+        description:
+          "This is an example setting for the sentenceTransformers plugin.",
+        helperText:
+          "This is an example setting for the sentenceTransformers plugin.",
       },
     },
 
     // Define any additional context menu groups your plugin adds here.
     contextMenuGroups: [
       {
-        id: "example",
-        label: "Example",
+        id: "sentenceTransformers",
+        label: "Sentence Transformers",
       },
     ],
 
     // Register any additional nodes your plugin adds here. This is passed a `register`
     // function, which you can use to register your nodes.
     register: (register) => {
-      register(exampleNode);
+      register(sentenceTransformersNode);
     },
   };
 
   // Make sure to return your plugin definition.
-  return examplePlugin;
+  return sentenceTransformersPlugin;
 };
 
 // Make sure to default export your plugin.
